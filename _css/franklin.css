@@ -81,9 +81,10 @@ html {
 
 .franklin-content {
   position: relative;
-  padding-left: 25%;  /* Increased to make room for TOC */
+  padding-left: 25%;
   padding-right: 12.5%;
   line-height: 1.35em;
+  max-width: 100%;
 }
 
 /* On wide screens, fix content width to a max value. */
@@ -241,15 +242,19 @@ td {
 ================================================================== */
 
 .franklin-content img {
-  width: 70%;
-  text-align: center;
-  padding-left: 10%;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1em auto;
+  padding-left: 0;
 }
 
 .franklin-content .img-small img {
-  width: 50%;
-  text-align: center;
-  padding-left: 20%;
+  max-width: 50%;
+  height: auto;
+  display: block;
+  margin: 1em auto;
+  padding-left: 0;
 }
 
 /* ==================================================================
@@ -346,11 +351,13 @@ code {
   padding: 2em 1em;
   background-color: #f8f9fa;
   border-right: 1px solid #e9ecef;
+  z-index: 100;
 }
 
 .franklin-toc ul {
   list-style-type: none;
   padding-left: 1em;
+  margin: 0;
 }
 
 .franklin-toc li {
@@ -360,6 +367,8 @@ code {
 .franklin-toc a {
   color: var(--text-color);
   text-decoration: none;
+  display: block;
+  padding: 0.2em 0;
 }
 
 .franklin-toc a:hover {
@@ -374,10 +383,17 @@ code {
     height: auto;
     border-right: none;
     border-bottom: 1px solid #e9ecef;
+    margin-bottom: 2em;
   }
   
   .franklin-content {
     padding-left: 6%;
     padding-right: 6%;
+  }
+  
+  .franklin-content img,
+  .franklin-content .img-small img {
+    max-width: 100%;
+    padding-left: 0;
   }
 }
