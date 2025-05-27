@@ -8,8 +8,4 @@ maxtoclevel = 3
 description = "Complete guide for installing cuLoRADS, including system requirements and step-by-step installation instructions."
 +++
 
-# Installation Guide
-
-\tableofcontents
-
-## System Requirements
+# Examples
