@@ -1,190 +1,244 @@
-@def title = "Franklin Example"
+@def title = "cuLoRADS"
 @def tags = ["syntax", "code"]
 @def hascode = true
 @def mintoclevel = 2
 @def maxtoclevel = 3
 
-# How to use Franklin
-
 \tableofcontents
 
-This section is meant as a refresher if you're new to Franklin.
-Have a look at both how the website renders and the corresponding markdown (`index.md`).
-Modify at will to get a feeling for how things work!
+![](/assets/culorads_logo.png)
 
-Ps: if you want to modify the header or footer or the general look of the website, adjust the files in
-* `src/_css/` and
-* `src/_html_parts/`.
 
-## The base with Markdown
+cuLoRADS is an enhanced GPU-based first-order method solver written in Julia for low-rank semi-definite programming problems (SDPs). It is developed based on methodologies described in [this paper](https://arxiv.org/abs/2407.15049).
 
-The [standard markdown syntax](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) can be used such as titles using `#`, lists:
+## Optimization Problem:
 
-* element with **bold**
-* element with _emph_
+cuLoRADS focuses on solving the following SDP problem:
 
-or code-blocks `inline` or with highlighting (note the `@def hascode = true` in the source to allow [highlight.js](https://highlightjs.org/) to do its job):
+$$
+\min_{\mathcal{A} \mathbf{X} = \mathbf{b}, \mathbf{X}\in \mathbb{S}_+^n} \left\langle \mathbf{C}, \mathbf{X} \right\rangle
+$$
 
-```julia
-abstract type Point end
-struct PointR2{T<:Real} <: Point
-    x::T
-    y::T
-end
-struct PointR3{T<:Real} <: Point
-    x::T
-    y::T
-    z::T
-end
-function len(p::T) where T<:Point
-  sqrt(sum(getfield(p, η)^2 for η ∈ fieldnames(T)))
-end
+## Features of the problem:
+
+- linear objective
+- affine constraints
+- positive-semidefinite variables
+
+## Current release:
+
+cuLoRADS is currently under active development. A pre-built binary that processes SDPA (.dat-s) format files is available. Users testing the solver on Linux can download the release from [the release site](https://github.com/COPT-Public/cuLoRADS/releases).
+
+Then, uncompress the .tar.gz by running
+
+```
+tar -xzvf cuLoRADS.tar.gz
 ```
 
-You can also quote stuff
+## Getting started:
 
-> You must have chaos within you to ...
+By running
 
-or have tables:
-
-| English         | Mandarin   |
-| --------------- | ---------- |
-| winnie the pooh | 维尼熊      |
-
-Note that you may have to do a bit of CSS-styling to get these elements to look the way you want them (the same holds for the whole page in fact).
-
-### Symbols and html entities
-
-If you want a dollar sign you have to escape it like so: \$, you can also use html entities like so: &rarr; or &pi; or, if you're using Juno for instance, you can use `\pi[TAB]` to insert the symbol as is: π (it will be converted to a html entity).[^1]
-
-If you want to show a backslash, just use it like so: \ ; if you want to force a line break, use a ` \\ ` like \\ so (this is on a new line).[^blah]
-
-If you want to show a backtick, escape it like so: \` and if you want to show a tick in inline code use double backticks like ``so ` ...``.
-
-Footnotes are nice too:
-
-[^1]: this is the text for the first footnote, you can style all this looking at `.fndef` elements; note that the whole footnote definition is _expected to be on the same line_.
-[^blah]: and this is a longer footnote with some blah from veggie ipsum: turnip greens yarrow ricebean rutabaga endive cauliflower sea lettuce kohlrabi amaranth water spinach avocado daikon napa cabbage asparagus winter purslane kale. Celery potato scallion desert raisin horseradish spinach carrot soko.
-
-## Basic Franklin extensions
-
-### Divs
-
-It is sometimes useful to have a short way to make a part of the page belong to a div so that it can be styled separately.
-You can do this easily with Franklin by using `@@divname ... @@`.
-For instance, you could want a blue background behind some text.
-
-@@colbox-blue
-Here we go! (this is styled in the css sheet with name "colbox-blue").
-@@
-
-Since it's just a `<div>` block, you can put this construction wherever you like and locally style your text.
-
-### LaTeX and Maths
-
-Essentially three things are imitated from LaTeX
-
-1. you can introduce definitions using `\newcommand`
-1. you can use hyper-references with `\eqref`, `\cite`, ...
-1. you can show nice maths (via KaTeX)
-
-The definitions can be introduced in the page or in the `config.md` (in which case they're available everywhere as opposed to just in that page).
-For instance, the commands `\scal` and `\R` are defined in the config file (see `src/config.md`) and can directly be used whereas the command `\E` is defined below (and therefore only available on this page):
-
-\newcommand{\E}[1]{\mathbb E\left[#1\right]}
-
-Now we can write something like
-
-$$  \varphi(\E{X}) \le \E{\varphi(X)}. \label{equation blah} $$
-
-since we've given it the label `\label{equation blah}`, we can refer it like so: \eqref{equation blah} which can be convenient for pages that are math-heavy.
-
-In a similar vein you can cite references that would be at the bottom of the page: \citep{noether15, bezanson17}.
-
-**Note**: the LaTeX commands you define can also incorporate standard markdown (though not in a math environment) so for instance let's define a silly `\bolditalic` command.
-
-\newcommand{\bolditalic}[1]{_**!#1**_} <!--_ ignore this comment, it helps atom to not get confused by the trailing underscore when highlighting the code but is not necessary.-->
-
-and use it \bolditalic{here for example}.
-
-Here's another quick one, a command to change the color:
-
-\newcommand{\col}[2]{~~~<span style="color:~~~#1~~~">~~~!#2~~~</span>~~~}
-
-This is \col{blue}{in blue} or \col{#bf37bc}{in #bf37bc}.
-
-### A quick note on whitespaces
-
-For most commands you will use `#k` to refer to the $k$-th argument as in LaTeX.
-In order to reduce headaches, this forcibly introduces a whitespace on the left of whatever is inserted which, usually, changes nothing visible (e.g. in a math settings).
-However there _may be_ situations where you do not want this to happen and you know that the insertion will not clash with anything else.
-In that case, you should simply use `!#k` which will not introduce that whitespace.
-It's probably easier to see this in action:
-
-\newcommand{\pathwith}[1]{`/usr/local/bin/#1`}
-\newcommand{\pathwithout}[1]{`/usr/local/bin/!#1`}
-
-* with: \pathwith{script.jl}, there's a whitespace you don't want 🚫
-* without: \pathwithout{script.jl} here there isn't ✅
-
-### Raw HTML
-
-You can include raw HTML by just surrounding a block with `~~~`.
-Not much more to add.
-This may be useful for local custom layouts like having a photo next to a text in a specific way.
-
-~~~
-<div class="row">
-  <div class="container">
-    <img class="left" src="/assets/rndimg.jpg">
-    <p>
-    Marine iguanas are truly splendid creatures. They're found on the Gálapagos islands, have skin that basically acts as a solar panel, can swim and may have the ability to adapt their body size depending on whether there's food or not.
-    </p>
-    <p>
-    Evolution is cool.
-    </p>
-    <div style="clear: both"></div>      
-  </div>
-</div>
-~~~
-
-**Note 1**: again, entire such blocks can be made into latex-like commands via `\newcommand{\mynewblock}[1]{...}`.
-
-**Note 2**: whatever is in a raw HTML block is *not* further processed (so you can't have LaTeX in there for instance). A partial way around this is to use `@@...` blocks which *will* be recursively parsed. The following code gives the same result as above with the small difference that there is LaTeX being processed in the inner div.
-
-@@row
-@@container
-@@left ![](/assets/rndimg.jpg) @@
-@@
-Marine iguanas are **truly splendid** creatures. They're not found in equations like $\exp(-i\pi)+1$. But they're still quite cool.
-~~~
-<div style="clear: both"></div>
-~~~
-@@
-
-## Pages and structure
-
-Here are a few empty pages connecting to the menu links to show where files can go and the resulting paths. (It's probably best if you look at the source folder for this).
-
-* [menu 1](/menu1/)
-* [menu 2](/menu2/)
-* [menu 3](/menu3/)
-
-## References (not really)
-
-* \biblabel{noether15}{Noether (1915)} **Noether**,  Körper und Systeme rationaler Funktionen, 1915.
-* \biblabel{bezanson17}{Bezanson et al. (2017)} **Bezanson**, **Edelman**, **Karpinski** and **Shah**, [Julia: a fresh approach to numerical computing](https://julialang.org/research/julia-fresh-approach-BEKS.pdf), SIAM review 2017.
-
-## Header and Footer
-
-As you can see here at the bottom of the page, there is a footer which you may want on all pages but for instance you may want the date of last modification to be displayed.
-In a fashion heavily inspired by [Hugo](https://gohugo.io), you can write things like
-
-```html
-Last modified: {{ fill fd_mtime }}.
+```sh
+./bin/cuLoRADS --filePath /PATH/TO/SDPAFILE.dat-s --outputPath /PATH/TO/OUTPUT/FOLDER
 ```
 
-(cf. `src/_html_parts/page_foot.html`) which will then replace these braces with the content of a dictionary of variables at the key `fd_mtime`.
-This dictionary of variables is accessed locally by pages through `@def varname = value` and globally through the `config.md` page via the same syntax.
+we can solve SDPs represented in standard SDPA format.
 
-There's a few other such functions of the form `{{fname p₁ p₂}}` as well as support for conditional blocks. If you wander through the `src/_html_parts/` folder and its content, you should be able to see those in action.
+
+
+If everything goes well, we would see logs like below:
+
+```
+╔════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                                                                                            ║
+║                            L                           RRRRRR           A          DDDDDD         SSSSSS   ║
+║                            L                           R     R         A A         D     D       S         ║
+║   CCCCC       U    U       L              OOOO         R     R        A   A        D     D       S         ║
+║  C            U    U       L             O    O        RRRRRR        AAAAAAA       D     D        SSSSSS   ║
+║  C            U    U       L             O    O        R    R        A     A       D     D              S  ║
+║  C            U    U       L             O    O        R     R       A     A       D     D              S  ║
+║   CCCCC        UUUU        LLLLLLL        OOOO         R     R       A     A       DDDDDD         SSSSSS   ║
+║                                                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+@ Solver Parameters
+    ┌──────────────────┬───────────────┐
+  ↳ │ Parameter        │ Value         │
+    ├──────────────────┼───────────────┤
+    │ initRho          │ 0.00e+00      │
+    │ rhoMax           │ 5.00e+03      │
+    │ maxALMIter       │ 200           │
+    │ maxADMMIter      │ 10000         │
+    │ timesLogRank     │ 2.00          │
+    │ ALMRhoFactor     │ 2.00          │
+    │ ADMMRhoFreq      │ 5             │
+    │ ADMMRhoFactor    │ 1.20          │
+    │ phase1Tol        │ 1.00e-03      │
+    │ phase2Tol        │ 1.00e-05      │
+    │ timeSecLimit     │ 40000.00      │
+    │ heuristicFactor  │ 1.00          │
+    │ lbfgsListLength  │ 2             │
+    │ reoptLevel       │ 4             │
+    │ dyrankLevel      │ 2             │
+    │ enhancementMode  │ false         │
+    │ accLevel         │ 1             │
+    └──────────────────┴───────────────┘
+
+➔ Reading Problem File ✅ (2.09 seconds) 
+
+@ Problem Information
+  ↳ sdp block dims: [1296]
+  ↳ lp dim: 0
+  ↳ number of constraints: 1297
+
+@ Storage Format (S --- Sparse or D --- Dense)
+  ↳ objective matrices: [D]
+  ↳ vectorized objective matrix: S
+
+➔ Transfering Date To GPU ✅ (0.28 seconds) 
+
+➔ Initializing GPU Solver ✅ (0.91 seconds) 
+
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                             Start Phase I: ALM                                             │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ Initial Ranks: [15]                                                                                        │
+├──────┬─────────┬─────────────┬─────────────┬─────────────┬─────────────┬─────────────┬──────────┬──────────┤
+│ Iter │ In Iter │ P Obj       │ D Obj       │ P Infea 1   │ P Infea Inf │ PD Gap      │ Rho      │ Time     │
+├──────┼─────────┼─────────────┼─────────────┼─────────────┼─────────────┼─────────────┼──────────┼──────────┤
+│ 1    │ 370     │ -1.8973e+07 │ -2.4862e+04 │ 2.0137e+01  │ 1.3059e+04  │ 9.9738e-01  │ 5.56e-02 │ 1.32     │
+│ 2    │ 786     │ -2.6310e+04 │ -2.4861e+04 │ 7.2640e-03  │ 4.7107e+00  │ 2.8311e-02  │ 1.11e-01 │ 2.06     │
+│ 3    │ 810     │ -2.4900e+04 │ -2.4853e+04 │ 6.4754e-03  │ 4.1993e+00  │ 9.4616e-04  │ 2.22e-01 │ 2.08     │
+│ 4    │ 843     │ -2.4541e+04 │ -2.4835e+04 │ 5.8972e-03  │ 3.8244e+00  │ 5.9400e-03  │ 4.44e-01 │ 2.11     │
+│ 5    │ 877     │ -2.5152e+04 │ -2.4816e+04 │ 4.9622e-03  │ 3.2180e+00  │ 6.7127e-03  │ 8.89e-01 │ 2.14     │
+│ 6    │ 911     │ -2.5057e+04 │ -2.4791e+04 │ 3.7477e-03  │ 2.4304e+00  │ 5.3243e-03  │ 1.78e+00 │ 2.17     │
+├──────┴─────────┴─────────────┴─────────────┴─────────────┴─────────────┴─────────────┴──────────┴──────────┤
+│ Updating Ranks ...                                                                                         │
+│ Updated Ranks: [23]                                                                                        │
+├──────┬─────────┬─────────────┬─────────────┬─────────────┬─────────────┬─────────────┬──────────┬──────────┤
+│ Iter │ In Iter │ P Obj       │ D Obj       │ P Infea 1   │ P Infea Inf │ PD Gap      │ Rho      │ Time     │
+├──────┼─────────┼─────────────┼─────────────┼─────────────┼─────────────┼─────────────┼──────────┼──────────┤
+│ 7    │ 1257    │ -2.4996e+04 │ -2.4770e+04 │ 2.3561e-03  │ 1.5279e+00  │ 4.5306e-03  │ 3.56e+00 │ 2.63     │
+│ 8    │ 1321    │ -2.4904e+04 │ -2.4756e+04 │ 1.3097e-03  │ 8.4933e-01  │ 2.9834e-03  │ 7.11e+00 │ 2.69     │
+│ 9    │ 1380    │ -2.4820e+04 │ -2.4750e+04 │ 5.7590e-04  │ 3.7347e-01  │ 1.4280e-03  │ 1.42e+01 │ 2.75     │
+│ 10   │ 1467    │ -2.4770e+04 │ -2.4748e+04 │ 1.8459e-04  │ 1.1971e-01  │ 4.5195e-04  │ 2.84e+01 │ 2.83     │
+│ 11   │ 1589    │ -2.4752e+04 │ -2.4748e+04 │ 4.0895e-05  │ 2.6520e-02  │ 8.7843e-05  │ 5.69e+01 │ 2.94     │
+│ 12   │ 1621    │ -2.4748e+04 │ -2.4748e+04 │ 7.2906e-06  │ 4.7279e-03  │ 1.0105e-05  │ 1.14e+02 │ 2.97     │
+│ 13   │ 1678    │ -2.4748e+04 │ -2.4748e+04 │ 3.0452e-06  │ 1.9748e-03  │ 7.5823e-07  │ 2.28e+02 │ 3.02     │
+├──────┴─────────┴─────────────┴─────────────┴─────────────┴─────────────┴─────────────┴──────────┴──────────┤
+│ Updating Ranks ...                                                                                         │
+│ Updated Ranks: [35]                                                                                        │
+├──────┬─────────┬─────────────┬─────────────┬─────────────┬─────────────┬─────────────┬──────────┬──────────┤
+│ Iter │ In Iter │ P Obj       │ D Obj       │ P Infea 1   │ P Infea Inf │ PD Gap      │ Rho      │ Time     │
+├──────┼─────────┼─────────────┼─────────────┼─────────────┼─────────────┼─────────────┼──────────┼──────────┤
+│ 14   │ 2422    │ -2.4748e+04 │ -2.4748e+04 │ 1.9263e-06  │ 1.2492e-03  │ 1.6409e-07  │ 4.55e+02 │ 3.78     │
+│ 15   │ 2423    │ -2.4748e+04 │ -2.4748e+04 │ 1.2794e-06  │ 8.2968e-04  │ 3.7709e-08  │ 4.55e+02 │ 3.78     │
+└──────┴─────────┴─────────────┴─────────────┴─────────────┴─────────────┴─────────────┴──────────┴──────────┘
+
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                          Switch To Phase II: ADMM                                          │
+├──────┬─────────┬─────────────┬─────────────┬─────────────┬─────────────┬─────────────┬──────────┬──────────┤
+│ Iter │ CG Iter │ P Obj       │ D Obj       │ P Infea 1   │ P Infea Inf │ PD Gap      │ Rho      │ Time     │
+├──────┼─────────┼─────────────┼─────────────┼─────────────┼─────────────┼─────────────┼──────────┼──────────┤
+│ 15   │ 119     │ -2.4748e+04 │ -2.4748e+04 │ 1.3007e-08  │ 8.4353e-06  │ 3.9613e-07  │ 6.55e+02 │ 4.34     │
+└──────┴─────────┴─────────────┴─────────────┴─────────────┴─────────────┴─────────────┴──────────┴──────────┘
+
+➔ Initial Solving Finished ✅ (4.34 seconds)
+
+➔ Evaluating Dual Infeasibility ✅ (0.03 seconds) 
+
+@ Solution Information
+    ┌────────────────────────────────┬───────────────┐
+  ↳ │ Name                           │ Value         │
+    ├────────────────────────────────┼───────────────┤
+    │ primal objective value         │ -2.474782e+04 │
+    │ dual objective value           │ -2.474780e+04 │
+    │ primal infeasibility (DIMACS)  │ 1.300745e-08  │
+    │ dual infeasibility (DIMACS)    │ 2.950202e-09  │
+    │ primal dual gap (DIMACS)       │ 4.021113e-07  │
+    └────────────────────────────────┴───────────────┘
+
+➔ Problem Solved ✅ (4.34 seconds)
+```
+
+* **Note:** Even if the Julia application is precompiled, there will still be some dynamic compilation time at runtime due to Julia's Just-In-Time (JIT) compilation mechanism. (up to several seconds per run)
+
+## Environment Requirements:
+
+cuLoRADS runs on Linux systems, with a minimum system requirement of Ubuntu 20.04. We have tested the following configurations, all of which successfully run the software:
+
+* H100 + Ubuntu 22.04
+* RTX 4090 + Ubuntu 22.04
+* A6000 + Ubuntu 20.04
+* A100 + Ubuntu 20.04
+
+
+## Output Format
+
+If the `outputPath` is set, a `.out.mat` file with the same name as the problem will be written to the selected folder. This file is a standard MAT file containing the following data:
+
+- **primal_sdp**: The low-rank primal solution \( U_i \) for each SDP block \( i \), where \( U_i U_i^T = X_i \).
+- **primal_lp**: The primal solution vector \(x\) for the LP variable (or the diagonal SDP block).
+- **dual**: The dual solution $\lambda$.
+
+
+## Parameters
+
+cuLoRADS provides users with customizable parameters to fine-tune the solving process according to specific problem requirements (if needed). Below is a detailed description of each parameter:
+
+| **Parameter**   | **Description**                                                                            | **Type** | **Default Value** |
+| --------------- | ------------------------------------------------------------------------------------------ | -------- | ----------------- |
+| timesLogRank    | Multiplier for the O(log(m)) rank calculation (rank = **timesLogRank** $\times$ log(m)).   | float    | 2.0               |
+| phase1Tol       | Tolerance for ending Phase I.                                                              | float    | 1e-3              |
+| phase2Tol       | Tolerance for ending Phase II.                                                             | float    | 1e-5              |
+| reoptLevel      | How many times of reopt is allowed (>= 0).                                                 | int      | 4                 |
+| dyrankLevel     | Increases sensitivity to rank update triggers as it rises (select from 0, 1, 2).           | int      | 2                 |
+| enhancementMode | Enhance robustness of the solver and the accuracy of the solution obtained.                | bool     | true              |
+| accLevel        | How accurate the subproblems are solved (select from 0, 1, 2, 3, larger -> more accurate). | int      | 1                 |
+| initRho         | Initial value for the penalty parameter $\rho$.                                            | float    | $1/ \sqrt n$      |
+| rhoMax          | Maximum value for the penalty parameter $\rho$.                                            | float    | 5000.0            |
+| ALMRhoFactor    | Multiplier for increasing $\rho$ ($\rho =$ **ALMRhoFactor** $\times$ $\rho$) in ALM.       | float    | 2.0               |
+| ADMMRhoFreq     | Frequency of increasing $\rho$ (increased every **ADMMRhoFreq** ADMM iterations).          | int      | 5                 |
+| ADMMRhoFactor   | Multiplier for increasing $\rho$ ($\rho =$ **ADMMRhoFactor** $\times$ $\rho$) in ADMM.     | float    | 1.2               |
+| heuristicFactor | Heuristic factor applied when switching to Phase II.                                       | float    | 1.0               |
+| lbfgsListLength | The number of vectors stored for L-BFGS                                                    | int      | 2                 |
+| maxALMIter      | Maximum iteration number for the ADMM algorithm.                                           | int      | 200               |
+| maxADMMIter     | Maximum iteration number for the ADMM algorithm.                                           | int      | 10000             |
+| timeSecLimit    | Solving time limitation in seconds.                                                        | float    | 40000.0           |
+| juliaWarmStart  | Whether run the solver for a few steps then reset it to reduce Julia compilation overhead. | bool     | false             |
+
+For example, to set **`timesLogRank`** to `1.0` and solve a problem, we can execute
+
+```
+./bin/cuLoRADS --filePath /PATH/TO/SDPAFILE.dat-s --timesLogRank 1.0
+```
+* For the details of the reopt technique and the parameter reoptLevel, please refer to [the paper](https://arxiv.org/abs/2407.15049).
+
+* The time reported in the end is **`GPU solving time`**, the evaluation of dual infeasibility is currently on CPU and not included in the reported time.
+
+* Setting **`juliaWarmStart`** to `true` can remove the influence of Julia compilation time when benchmarking.
+
+## Developing Team
+
+cuLoRADS is developed by 
+
+- Qiushi Han: joshhan2@illinois.edu
+
+## Reference
+
+- Han, Q., Lin, Z., Liu, H., Chen, C., Deng, Q., Ge, D., & Ye, Y. (2024). Accelerating low-rank factorization-based semidefinite programming algorithms on GPU. *arXiv*. https://doi.org/10.48550/arXiv.2407.15049
+
+```
+@misc{han2024acceleratinglowrankfactorizationbasedsemidefinite,
+      title={Accelerating Low-Rank Factorization-Based Semidefinite Programming Algorithms on GPU}, 
+      author={Qiushi Han and Zhenwei Lin and Hanwen Liu and Caihua Chen and Qi Deng and Dongdong Ge and Yinyu Ye},
+      year={2024},
+      eprint={2407.15049},
+      archivePrefix={arXiv},
+      primaryClass={math.OC},
+      url={https://arxiv.org/abs/2407.15049}, 
+}
+```
+
+**cuLoRADS is free for academic use. When utilizing cuLoRADS in published works, please cite the source above.**
