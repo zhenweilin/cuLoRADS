@@ -85,6 +85,7 @@ html {
   padding-right: 12.5%;
   line-height: 1.35em;
   max-width: 100%;
+  margin: 0 auto;
 }
 
 /* On wide screens, fix content width to a max value. */
@@ -119,6 +120,8 @@ h4,
 h5,
 h6 {
   text-align: left;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .franklin-content h1 {
@@ -133,6 +136,11 @@ h6 {
   border-bottom: 1px solid lightgrey;
   margin-top: 2em;
   margin-bottom: 1em;
+}
+
+.franklin-content h3 {
+  margin-top: 1.5em;
+  margin-bottom: 0.8em;
 }
 
 .franklin-content h1 a { color: inherit; }
@@ -355,6 +363,9 @@ code {
   border-right: 1px solid #eee;
   overflow-y: auto;
   z-index: 1000;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .franklin-toc ul,
@@ -380,15 +391,17 @@ code {
   text-decoration: underline;
 }
 
+/* Content layout */
 .franklin-content {
   position: relative;
   padding-left: 25%;
   padding-right: 12.5%;
   line-height: 1.35em;
   max-width: 100%;
+  margin: 0 auto;
 }
 
-/* On wide screens, fix content width to a max value. */
+/* On wide screens, fix content width to a max value */
 @media (min-width: 940px) {
   .franklin-content {
     width: 705px;
@@ -397,7 +410,7 @@ code {
   }
 }
 
-/* On narrow device, reduce margins and adjust TOC. */
+/* On narrow device, reduce margins and adjust TOC */
 @media (max-width: 768px) {
   .franklin-toc {
     position: relative;
@@ -412,4 +425,20 @@ code {
     padding-left: 6%;
     padding-right: 6%;
   }
+}
+
+/* Ensure content is properly positioned relative to TOC */
+.franklin-content {
+  margin-top: 2em;
+}
+
+/* Ensure proper spacing between sections */
+.franklin-content h2 {
+  margin-top: 2em;
+  margin-bottom: 1em;
+}
+
+.franklin-content h3 {
+  margin-top: 1.5em;
+  margin-bottom: 0.8em;
 }
