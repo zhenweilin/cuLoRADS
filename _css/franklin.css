@@ -74,9 +74,40 @@ html {
     TEXT GEOMETRY
 ================================================================== */
 
+.franklin-toc {
+  position: fixed;
+  top: 100px;
+  left: 20px;
+  width: 20%;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  padding: 20px;
+  background-color: white;
+  border-right: 1px solid #eee;
+  z-index: 100;
+}
+
+.franklin-toc ul,
+.franklin-toc ol {
+  list-style-type: none;
+  padding-left: 1em;
+  margin: 0;
+}
+
 .franklin-toc li {
-  /* Avoid clickable elements being too close together. */
   margin: 0.6rem 0;
+  line-height: 1.4;
+}
+
+.franklin-toc a {
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 0.9em;
+}
+
+.franklin-toc a:hover {
+  color: #004de6;
+  text-decoration: underline;
 }
 
 .franklin-content {
@@ -212,37 +243,34 @@ td {
 .franklin-content .bibref a { color: green; }
 
 .franklin-content sup {
-  font-size: 70%;
+  font-size: 0.8em;
   vertical-align: super;
   line-height: 0;
 }
 
 .franklin-content table.fndef {
-  margin: 0;
-  margin-bottom: 10px;
+  width: 100%;
+  border-collapse: collapse;
 }
 
 .franklin-content .fndef tr,
-td {
+.franklin-content .fndef td {
+  border: none;
   padding: 0;
-  border: 0;
-  text-align: left;
 }
 
 .franklin-content .fndef tr {
-  border-left: 2px solid lightgray;
+  display: flex;
+  margin: 0.5em 0;
 }
 
 .franklin-content .fndef td.fndef-backref {
-  vertical-align: top;
-  font-size: 70%;
-  padding-left: 5px;
+  flex: 0 0 auto;
+  padding-right: 0.5em;
 }
 
 .franklin-content .fndef td.fndef-content {
-  font-size: 80%;
-  padding-left: 10px;
-  width: 100%;
+  flex: 1 1 auto;
 }
 
 /* ==================================================================
@@ -253,16 +281,14 @@ td {
   max-width: 100%;
   height: auto;
   display: block;
-  margin: 1em auto;
-  padding-left: 0;
+  margin: 0 auto;
 }
 
 .franklin-content .img-small img {
-  max-width: 50%;
+  max-width: 100%;
   height: auto;
   display: block;
-  margin: 1em auto;
-  padding-left: 0;
+  margin: 0 auto;
 }
 
 /* ==================================================================
@@ -274,11 +300,11 @@ body { counter-reset: eqnum; }
 .katex { font-size: 1em !important; }
 
 .katex-display .katex {
-  /* Overwrite KaTeX settings. */
   display: inline-block;
-
-  /* Allow display equations to wrap on small screens. */
-  white-space: normal;
+  text-align: center;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .katex-display::after {
@@ -290,7 +316,7 @@ body { counter-reset: eqnum; }
 }
 
 .nonumber .katex-display::after {
-  counter-increment: nothing;
+  counter-increment: none;
   content: "";
 }
 
@@ -299,36 +325,30 @@ body { counter-reset: eqnum; }
 ================================================================== */
 
 code {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.9em;
   background-color: var(--block-background);
   padding: 0.1em 0.2em;
-  border-radius: 2px;
-  font-size: var(--small);
+  border-radius: 3px;
 }
 
-/* .franklin-content code { */
-
-/* background-color: rgba(27,31,35,0.05); */
-
-/* padding: 0.1em 0.2em; */
-
-/* border-radius: 2px; */
-
-/* font-size: 90%; } */
-
 .hljs {
-  font-size: var(--small);
-  line-height: 1.35em;
-  border-radius: 10px;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.9em;
+  background-color: var(--block-background);
 }
 
 .hljs-meta { font-weight: bold;}
-
 .hljs-meta.shell_ {color: crimson;}
 .hljs-meta.prompt_ {color: rgb(25, 179, 51);}
 
 .code-output {
-  background: var(--output-background);
-  border: 1px dashed #dbdbdb;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.9em;
+  background-color: var(--output-background);
+  padding: 0.1em 0.2em;
+  border-radius: 3px;
+  white-space: pre-wrap;
 }
 
 /* ==================================================================
@@ -336,89 +356,19 @@ code {
 ================================================================== */
 
 .franklin-content .colbox-blue {
-  background-color: #eef3f5;
-  padding-top: 5px;
-  padding-right: 10px;
-  padding-left: 10px;
-  padding-bottom: 5px;
-  margin-left: 5px;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  border-radius: 0 10px 10px 0;
-  border-left: 5px solid #4c9cf1;
+  background-color: #e6f3ff;
+  border-radius: 5px;
+  padding: 20px;
+  margin: 20px 0;
 }
 
 /* ==================================================================
-    TOC STYLES
+    MOBILE RESPONSIVE
 ================================================================== */
 
-.franklin-toc {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 20%;
-  height: 100%;
-  padding: 2em 1em;
-  background: #fff;
-  border-right: 1px solid #eee;
-  overflow-y: auto;
-  z-index: 1000;
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-}
-
-.franklin-toc ul,
-.franklin-toc ol {
-  list-style-type: none;
-  padding-left: 1em;
-  margin: 0;
-}
-
-.franklin-toc li {
-  margin: 0.6rem 0;
-  line-height: 1.4;
-}
-
-.franklin-toc a {
-  color: var(--text-color);
-  text-decoration: none;
-  font-size: 0.9em;
-}
-
-.franklin-toc a:hover {
-  color: #004de6;
-  text-decoration: underline;
-}
-
-/* Content layout */
-.franklin-content {
-  position: relative;
-  padding-left: 25%;
-  padding-right: 12.5%;
-  line-height: 1.35em;
-  max-width: 100%;
-  margin: 0 auto;
-}
-
-/* On wide screens, fix content width to a max value */
-@media (min-width: 940px) {
-  .franklin-content {
-    width: 705px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
-
-/* On narrow device, reduce margins and adjust TOC */
 @media (max-width: 768px) {
   .franklin-toc {
-    position: relative;
-    width: 100%;
-    height: auto;
-    border-right: none;
-    border-bottom: 1px solid #eee;
-    padding: 1em;
+    display: none;
   }
   
   .franklin-content {
@@ -427,18 +377,25 @@ code {
   }
 }
 
-/* Ensure content is properly positioned relative to TOC */
-.franklin-content {
-  margin-top: 2em;
-}
+/* ==================================================================
+    PRINT STYLES
+================================================================== */
 
-/* Ensure proper spacing between sections */
-.franklin-content h2 {
-  margin-top: 2em;
-  margin-bottom: 1em;
-}
-
-.franklin-content h3 {
-  margin-top: 1.5em;
-  margin-bottom: 0.8em;
+@media print {
+  .franklin-toc {
+    display: none;
+  }
+  
+  .franklin-content {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  
+  .franklin-content h2 {
+    page-break-after: avoid;
+  }
+  
+  .franklin-content h3 {
+    page-break-after: avoid;
+  }
 }
