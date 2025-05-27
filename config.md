@@ -4,6 +4,9 @@ Add here global page variables to use throughout your website.
 +++
 author = "Septimia Zenobia"
 mintoclevel = 2
+maxtoclevel = 3
+toc_depth = 3
+toc_style = "franklin"
 
 # uncomment and adjust the following line if the expected base URL of your website is something like [www.thebase.com/yourproject/]
 # please do read the docs on deployment to avoid common issues: https://franklinjl.org/workflow/deploy/#deploying_your_website
